@@ -115,7 +115,7 @@ class MatchingRep():
         # create checkpoint to save the best model
         if not os.path.isdir('./model'):
             os.mkdir('./model')
-        checkpointer = ModelCheckpoint(filepath='./model/MatchingRepCheckpoint', verbose=1, save_best_only=True, save_weights_only=True)
+        checkpointer = ModelCheckpoint(filepath='./model/MatchingRepCheckpoint', verbose=verbose, save_best_only=True, save_weights_only=True)
 
         # result holder
         history = {}
@@ -134,13 +134,15 @@ class MatchingRep():
                 q_val = self.models['CLUS'].predict(validation_data[0][1], verbose=0)
                 p_val = utils.target_distribution(q_val)
                 target_val = np.hstack([validation_data[1].reshape(-1, 1), p_val])
-                hist = self.models['MatchingRep_train'].fit(X, target, validation_data=(validation_data[0], target_val), batch_size=batch_size, epochs=5, verbose=verbose, callbacks=[checkpointer])
+                hist = self.models['MatchingRep_train'].fit(X, target, validation_data=(validation_data[0], target_val), batch_size=batch_size, epochs=5, callbacks=[checkpointer], verbose=verbose)
             else:
                 hist = self.models['MatchingRep_train'].fit(X, target, batch_size=batch_size, epochs=5, callbacks=[checkpointer], verbose=verbose)
             
             history['loss'] += hist.history['loss']
             if validation_data is not None:
                 history['val_loss'] += hist.history['val_loss']
+
+        print('done', '='*30)
 
         return history
 
@@ -160,7 +162,6 @@ class MatchingRep():
     optimizer: optimizer, default 'Adam'
     batch_size: int, default 256
     epochs: int, default 40
-    verbose: 0, 1, 2, default 1
     """
     def fit(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40, verbose=1):
         print('start training', '='*30)
