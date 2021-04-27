@@ -109,7 +109,7 @@ class MatchingRep():
             # print(loss)
 
     # train matching rep. network 
-    def fit_MatchingRep(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40):
+    def fit_MatchingRep(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40, verbose=1):
         self.models['MatchingRep_train'].compile(optimizer=optimizer, loss=utils.MatchingRepLoss)
 
         # create checkpoint to save the best model
@@ -134,9 +134,9 @@ class MatchingRep():
                 q_val = self.models['CLUS'].predict(validation_data[0][1], verbose=0)
                 p_val = utils.target_distribution(q_val)
                 target_val = np.hstack([validation_data[1].reshape(-1, 1), p_val])
-                hist = self.models['MatchingRep_train'].fit(X, target, validation_data=(validation_data[0], target_val), batch_size=batch_size, epochs=5, callbacks=[checkpointer])
+                hist = self.models['MatchingRep_train'].fit(X, target, validation_data=(validation_data[0], target_val), batch_size=batch_size, epochs=5, verbose=verbose, callbacks=[checkpointer])
             else:
-                hist = self.models['MatchingRep_train'].fit(X, target, batch_size=batch_size, epochs=5, callbacks=[checkpointer])
+                hist = self.models['MatchingRep_train'].fit(X, target, batch_size=batch_size, epochs=5, callbacks=[checkpointer], verbose=verbose)
             
             history['loss'] += hist.history['loss']
             if validation_data is not None:
@@ -160,8 +160,9 @@ class MatchingRep():
     optimizer: optimizer, default 'Adam'
     batch_size: int, default 256
     epochs: int, default 40
+    verbose: 0, 1, 2, default 1
     """
-    def fit(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40):
+    def fit(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40, verbose=1):
         print('start training', '='*30)
         
         print('pre-training auto-encoder')
@@ -171,7 +172,7 @@ class MatchingRep():
         self.fit_CLUS(X[1], optimizer=optimizer, batch_size=batch_size)
 
         print('start training MatchingRep', '='*20)
-        return self.fit_MatchingRep(X, Y, validation_data=validation_data, optimizer=optimizer, batch_size=batch_size, epochs=epochs)
+        return self.fit_MatchingRep(X, Y, validation_data=validation_data, optimizer=optimizer, batch_size=batch_size, epochs=epochs, verbose=verbose)
     
     # load the best model so far
     def load_weights(self, path='./model/MatchingRepCheckpoint'):
