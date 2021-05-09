@@ -19,28 +19,7 @@ def load_data(data_path):
     real_O = data[:, data_dic['dstart']:data_dic['dend']]
     X = np.array(data_dic['X'])
     O = np.array(data_dic['O'])
-    S = np.array(data_dic['S'])
-
-    # X = real_X.copy()
-    # O = real_O.copy()
-    # np.random.shuffle(O)
-    # data_dic['X'] = X.astype('float').tolist()
-    # data_dic['O'] = O.astype('float').tolist()
-    
-    # means = np.zeros(X.shape[0])
-    # step = 800
-    # i = step
-    # while i < X.shape[0]:
-    #     means[i:] += .88*step
-    #     i += step
-    # S = np.absolute(np.random.normal(means, 1300, size=X.shape[0])).astype('int')
-    # # S = np.absolute(np.random.normal(np.arange(X.shape[0]), 5000, size=X.shape[0])).astype('int')
-    # # S = np.absolute(np.random.normal(0, 5000, size=X.shape[0])).astype('int')
-    # S = np.where(S < 30, 30, S)
-    # data_dic['S'] = S.tolist()
-    # with open(data_path, 'w', encoding='utf8') as f:
-    #     f.write(json.dumps(data_dic, ensure_ascii=False))
-
+    S = np.array(data_dic['S']）
 
     # obtain observed outcomes
     # handle both real data and fully obsereved synthetic data
