@@ -109,7 +109,7 @@ class MatchingRep():
             # print(loss)
 
     # train matching rep. network 
-    def fit_MatchingRep(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40, verbose=1):
+    def fit_MatchingRep(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=50, verbose=1):
         self.models['MatchingRep_train'].compile(optimizer=optimizer, loss=utils.MatchingRepLoss)
 
         # create checkpoint to save the best model
@@ -142,6 +142,7 @@ class MatchingRep():
             if validation_data is not None:
                 history['val_loss'] += hist.history['val_loss']
 
+        # self.models['MatchingRep_train'].load_weights('./model/MatchingRepCheckpoint')
         print('done', '='*30)
 
         return history
@@ -163,7 +164,7 @@ class MatchingRep():
     batch_size: int, default 256
     epochs: int, default 40
     """
-    def fit(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=40, verbose=1):
+    def fit(self, X, Y, validation_data=None, optimizer='Adam', batch_size=256, epochs=50, verbose=1):
         print('start training', '='*30)
         
         print('pre-training auto-encoder')
@@ -221,7 +222,7 @@ class MatchingRep():
         # allocate the organ to the first patient that has the organ's type as the best type
         # if no such a patient, consider the organ as its second likely type
         for c in o_clus:
-            xs = np.where(best_clus==c)[0]
+            xs = np.array(np.where(best_clus==c)).reshape(-1)
             if len(xs) == 0:
                 continue
             # return the index of the patient

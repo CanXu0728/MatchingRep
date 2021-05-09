@@ -71,7 +71,7 @@ def target_distribution(q):
     return (weight.T / weight.sum(1)).T
 
 # loss function of Matching rep.
-def MatchingRepLoss(true, pred, alpha=1, beta=.1):
+def MatchingRepLoss(true, pred, alpha=1, beta=.001):
     # get the number of clusters
     n_clusters = true.shape[1]-1
 
@@ -95,7 +95,7 @@ def MatchingRepLoss(true, pred, alpha=1, beta=.1):
     for i in range(n_clusters):
         w = K.reshape(c_true[:, i], shape=(-1, 1))
         weighted = rep * w
-        kld = KLD(weighted, rep)
+        kld = KLD(rep, weighted)
         r_loss += kld
     
     return y_loss + alpha*c_loss + beta*r_loss
